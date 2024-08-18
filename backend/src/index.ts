@@ -10,6 +10,7 @@ dotenv.config();
 
 interface Message {
   id: string;
+  username: string;
   msg: string;
 }
 
@@ -23,7 +24,8 @@ wss.on("connection", (ws: WebSocket) => {
 
   ws.on("message", (message: string) => {
     const msg: Message = JSON.parse(message);
-    Logger.info("Received from client ", msg.id);
+    Logger.info("Received from client", msg.id);
+    Logger.info(`Username: ${msg.username}`);
     Logger.info("Message: ", msg.msg);
   });
 
