@@ -1,13 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { withMainlayout } from "../layouts";
+import { io, Socket } from "socket.io-client";
 
 export const Dashboard: React.FC = withMainlayout(() => {
   const [id, setId] = useState<string | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   let username: string = "";
   let strdata: string = "";
 
+  useEffect(() => {
+    const skt: Socket = io("http://localhost:4000");
+
+    skt.on("idset", (data: string) => {
+      console.log(`ID is set to: ${data}`);
+      setId(data);
+    });
+
+    setSocket(skt);
+  }, []);
+
   const sendData = () => {
-    console.log(`Username: ${username}, Data: ${strdata}`);
+    if (socket && id) {
+      socket.emit(
+        "message",
+        JSON.stringify({ id: id, username: username, message: strdata })
+      );
+
+      socket.emit("hello", "Hello server");
+    }
   };
 
   return (
